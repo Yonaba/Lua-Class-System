@@ -27,7 +27,7 @@ It will return a table containing a set of functions.
 
 ##Documentation##
 * Full Documentation is available, with example code: [Documentation][].
-* Tests have also been included and can be used as a quick tour : See Tests.lua
+* Tests have also been included and can be used as a quick tour : See [Tests.lua][].
 * Documentation was generated thanks to [LuaDoc][].
 
 		
@@ -55,5 +55,6 @@ Copyright (c) 2012 Roland Yonaba
     distribution.
 
 [Documentation]: https://github.com/Yonaba/Lua-Class-System/downloads
+[Tests.lua]: https://github.com/Yonaba/Lua-Class-System/blob/05e10cff7904032dcb9e844a4575ab06b19bd4e4/tests.lua
 [LuaDoc]: http://keplerproject.github.com/luadoc/
 [zLIB License]: http://www.opensource.org/licenses/zlib-license.php
