@@ -20,12 +20,26 @@ freely, subject to the following restrictions:
     distribution.
 --]]
 
+--[[
+##Version history##
+
+* 05/21/12 - v1.0 
+			Static classes renamed to Abstract Classes
+			Added an internal register to track all classes/instances created and store class __system field away from the class itself
+			Behaviour of [class]:getSubClasses modified (now returns an array indexed with tables)
+			'quickTour.lua' added
+			
+* 05/18/12 - v0.1 - Initial Release
+--]]
+
+
 local pairs,ipairs = pairs,ipairs
 local assert = assert
 local setmetatable, getmetatable = setmetatable, getmetatable
 local insert = table.insert
 
 local baseClassMt = {__call = function (self,...) return self:new(...) end}
+local _register = { class = {}, object = {}}
 local Class
 
 -- Simple helper for building a raw copy of a table
@@ -34,7 +48,7 @@ local function deep_copy(t)
 	local r = {}
 	for k,v in pairs(t) do
 		if type(v) == 'table' then
-			if (v.__system) then
+			if (_register.class[v]) then
 				r[k] = v
 			else
 				r[k] = deep_copy(v)
@@ -51,8 +65,12 @@ local function isA(thing,kind)
 	if kind then
 		assert(kind == 'object' or kind == 'class','When given, string \'kind\' must be either \'class\' or \'object\'')
 	end
-	if thing and thing.__system  then
-		return kind and (thing.__system.__type == kind) or thing.__system.__type
+	if thing then
+		if _register.class[thing] then
+			return kind and _register.class[thing].__system.__type == kind or _register.class[thing].__system.__type
+		elseif _register.object[thing] then
+			return kind and _register.object[thing].__system.__type == type or _register.object[thing].__system.__type
+		end
 	end
 	return false
 end
@@ -60,8 +78,10 @@ end
 -- Instantiation
 local function instantiateFromClass(self,...)
 	assert(isA(self,'class'),'Class constructor must be called from a class')
-	assert(not self.__system.__static, 'Cannot instantiate from a static class')
-	local instance = setmetatable({__system = {__type = 'object',__superClass = self}},self)
+	assert(not _register.class[self].__system.__abstract, 'Cannot instantiate from abstract class')
+	local instance = {}
+	_register.object[instance] = {__system = {__type = 'object',__superClass = self}}
+	local instance = setmetatable(instance,self)
 		if self.init then
 			self.init(instance, ...)
 		end
@@ -71,17 +91,19 @@ end
 -- Class derivation
 local function extendsFromClass(self,extra_params)
 	assert(isA(self,'class'),'Inheritance must be called from a class')
-	assert(not self.__system.__final, 'Cannot derive from a final class')
+	assert(not _register.class[self].__system.__final, 'Cannot derive from a final class')
 	local class = Class(extra_params)
 	class.__index = class
-	class.__system.__superClass = self
-	insert(self.__system.__subClass,class)
+	_register.class[class].__system.__superClass = self
+	_register.class[self].__system.__subClass[class] = true
 	return setmetatable(class,self)
 end
 
 -- Super methods call
 local function callFromSuperClass(self,f,...)
-	local super = getmetatable(self).__system.__superClass
+	local superClass = getmetatable(self)
+	if not superClass then return nil end
+	local super = _register.class[superClass].__system.__superClass
 	local method = super[f]
 	return method(self,...)
 end
@@ -95,7 +117,7 @@ end
 -- Gets the subclasses
 local function getSubClasses(self)
 	assert(isA(self,'class'),'getSubClasses() must be called from class')
-	return self.__system.__subClass or {}
+	return _register.class[self].__system.__subClass or {}
 end
 
 -- Class creation
@@ -103,12 +125,13 @@ Class = function(members)
 
 	local newClass = members and deep_copy(members) or {}                              -- includes class variables
 	newClass.__index = newClass                                                        -- prepares class for inheritance
-	newClass.__system = {                                                              -- builds information for internal handling
+	_register.class[newClass] = {__system = {                                          -- builds information for internal handling
 		__type = "class",
-		__static = static or false,
+		__abstract = abstract or false,
 		__final = final or false,
 		__superClass = false,
 		__subClass = {},
+		}
 	}
 
 	newClass.new = instantiateFromClass                                                -- class instanciation
@@ -130,22 +153,23 @@ Class = function(members)
 end
 
 -- Static classes
-local function staticClass(members)
+local function abstractClass(members)
 	local class = Class(members)
-	class.__system.__static = true
+	_register.class[class].__system.__abstract = true
 	return class
 end
 
 -- Final classes
 local function finalClass(members)
 	local class = Class(members)
-	class.__system.__final = true
+	_register.class[class].__system.__final = true
 	return class
 end
 
 -- Returns utilities packed in a table (in order to avoid polluting the global environment)
-return  {
-			_VERSION = "0.1",
+return {
+			_VERSION = "1.0",
 			is_A = isA,
-			class = setmetatable({ static = staticClass, final = finalClass},{__call = function(self,...) return Class(...) end}),
+			class = setmetatable({ abstract = abstractClass, final = finalClass},{__call = function(self,...) return Class(...) end}),
 		}
+

@@ -11,7 +11,7 @@ It will return a table containing a set of functions.
 ##Full API Overview##
 		LCS.class(args)  : Creates a class
 		LCS.class.final(args)  : Creates a final class.
-		LCS.class.static(args)  : Creates a static class.
+		LCS.class.abstract(args)  : Creates a static class.
 		LCS.is_A(thing,kind)  : Checks the nature of the given argument 'thing'.
 		
 		[class](args) : Default class constructor used for instantiation.
@@ -24,10 +24,10 @@ It will return a table containing a set of functions.
 		[instance]:getClass() : Returns a reference to the class from which 'instance' was created
 		[instance]:is_A(aClass) : 	Checks if instance [instance] was instantiated from a specific class.
 		[instance]:super(method,...) : 	Calls a methods defined in a parent of a class from which object 'instance' was created 
-
+		
 ##Documentation##
 * Full Documentation is available, with example code: [Documentation][].
-* Tests have also been included and can be used as a quick tour : See [Tests.lua][].
+* Tests have also been included and can be used as a quick tour : See Tests.lua
 * Documentation was generated thanks to [LuaDoc][].
 
 		
@@ -55,6 +55,5 @@ Copyright (c) 2012 Roland Yonaba
     distribution.
 
 [Documentation]: https://github.com/Yonaba/Lua-Class-System/downloads
-[Tests.lua]: https://github.com/Yonaba/Lua-Class-System/blob/05e10cff7904032dcb9e844a4575ab06b19bd4e4/tests.lua
 [LuaDoc]: http://keplerproject.github.com/luadoc/
 [zLIB License]: http://www.opensource.org/licenses/zlib-license.php

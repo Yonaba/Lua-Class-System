@@ -260,7 +260,7 @@ addTest(
 		print(LCS.is_A(Cat,'class'))
 		print(LCS.is_A(Animal))
 
-		print((Animal:getSubClasses())[1] == Cat)
+		print((Animal:getSubClasses())[Cat])
 
 
 		]],
