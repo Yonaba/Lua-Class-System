@@ -20,22 +20,11 @@ freely, subject to the following restrictions:
     distribution.
 --]]
 
---[[
-##Version history##
-
-* 05/21/12 - v1.0 
-			Static classes renamed to Abstract Classes
-			Added an internal register to track all classes/instances created and store class __system field away from the class itself
-			Behaviour of [class]:getSubClasses modified (now returns an array indexed with tables)
-			'quickTour.lua' added
-			
-* 05/18/12 - v0.1 - Initial Release
---]]
-
 
 local pairs,ipairs = pairs,ipairs
 local assert = assert
 local setmetatable, getmetatable = setmetatable, getmetatable
+local type = type
 local insert = table.insert
 
 local baseClassMt = {__call = function (self,...) return self:new(...) end}
@@ -48,7 +37,7 @@ local function deep_copy(t)
 	local r = {}
 	for k,v in pairs(t) do
 		if type(v) == 'table' then
-			if (_register.class[v]) then
+			if (_register.class[v] or _register.object[v]) then
 				r[k] = v
 			else
 				r[k] = deep_copy(v)
@@ -58,6 +47,13 @@ local function deep_copy(t)
 		end
 	end
 	return r
+end
+
+-- Checks for a method in a list of attributes
+local function checkForMethod(list)
+	for k,attr in pairs(list) do
+		assert(type(attr)~='function','Cannot assign functions as members')
+	end
 end
 
 -- Checks if thing is a kind or whether an 'object' or 'class'
@@ -122,7 +118,7 @@ end
 
 -- Class creation
 Class = function(members)
-
+	checkForMethod(members)
 	local newClass = members and deep_copy(members) or {}                              -- includes class variables
 	newClass.__index = newClass                                                        -- prepares class for inheritance
 	_register.class[newClass] = {__system = {                                          -- builds information for internal handling
@@ -168,7 +164,7 @@ end
 
 -- Returns utilities packed in a table (in order to avoid polluting the global environment)
 return {
-			_VERSION = "1.0",
+			_VERSION = "1.1",
 			is_A = isA,
 			class = setmetatable({ abstract = abstractClass, final = finalClass},{__call = function(self,...) return Class(...) end}),
 		}
