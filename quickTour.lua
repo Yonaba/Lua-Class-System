@@ -22,9 +22,9 @@ freely, subject to the following restrictions:
 
 ---------------------------------------------------------------------------------------------
 --[[
-	quickTour Program for Lua Class System
+  quickTour Program for Lua Class System
     Copyright (C) 2012.
-	Written by Roland Yonaba - E-mail: roland[dot]yonaba[at]gmail[dot]com
+  Written by Roland Yonaba - E-mail: roland[dot]yonaba[at]gmail[dot]com
 --]]
 ----------------------------------------------------------------------------------------------
 
@@ -126,19 +126,19 @@ Account.maximum_balance = 500
 print('Adding method withdraw() to Account class')
 function Account:withdraw(s)
     if self.balance >= s then
-	self.balance = self.balance - s
-	else
-	print('[WARNING] : It remains only '..self.balance..', you moron! You cannot withdraw '..s)
-	end
+  self.balance = self.balance - s
+  else
+  print('[WARNING] : It remains only '..self.balance..', you moron! You cannot withdraw '..s)
+  end
 end
 
 print('Adding method deposit() to Account class')
 function Account:deposit(s)
     if self.balance + s <= self.maximum_balance then
-	self.balance = self.balance + s
-	else
-	print('[WARNING] : Your account balance is currently '..self.balance..' and is limited to '..self.maximum_balance)
-	end
+  self.balance = self.balance + s
+  else
+  print('[WARNING] : Your account balance is currently '..self.balance..' and is limited to '..self.maximum_balance)
+  end
 end
 
 print('we create Account with default balance of 100')
@@ -179,7 +179,7 @@ print('myVipAccount current balance is',myVipAccount.balance)
 print('now we redefine deposit() method in VipAccount class so that a VipAccount can hold more money than the maximum_balance')
 
 function VipAccount:deposit(s)
-	self.balance = self.balance + s
+  self.balance = self.balance + s
 end
 print('Let\'s try to make a huge deposit of 1000!')
 myVipAccount:deposit(1000)
@@ -217,29 +217,29 @@ print('ERROR when executing "vipAccountNew = (finalVipAccount:extends())" : ',se
 
 [Topics[8]] =
 [[
-	print('\n The quick tour is complete!\n Now, enjoy using LCS.\nFeel free to report any comment/bugs/suggestions at :\n roland[dot]yonaba[at]gmail[dot]com')
+  print('\n The quick tour is complete!\n Now, enjoy using LCS.\nFeel free to report any comment/bugs/suggestions at :\n roland[dot]yonaba[at]gmail[dot]com')
 ]]
 
 }
 
 
 for i,topic in ipairs(Topics) do
-	local sample = samples[topic]
-		if os.getenv('os') then os.execute('cls') end
-	print('=== Topic : '..topic..' ===\n')
-		if topic~='End' then
-		print(sample)
-		print('\n=== Output === \n')
-		end
+  local sample = samples[topic]
+  if os.getenv('os') then os.execute('cls') end
+  print('=== Topic : '..topic..' ===\n')
+    if topic~='End' then
+      print(sample)
+      print('\n=== Output === \n')
+    end
 
-	local exec,failed = pcall(loadstring(sample))
-	if not exec then
-		output = ''
-		print('\n Failed to run a sample.\nPlease report the following error to the author.\n')
-		print(failed)
-	end
+  local exec,failed = pcall(loadstring(sample))
+  if not exec then
+    output = ''
+    print('\n Failed to run a sample.\nPlease report the following error to the author.\n')
+    print(failed)
+  end
 
-	print('\nPress Enter to run the next sample')
-	io.read()
+  print('\nPress Enter to run the next sample')
+  io.read()
 end
 
