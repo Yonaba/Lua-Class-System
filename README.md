@@ -4,26 +4,24 @@ LCS is light-weight, abstract thus can fit in every project where OOP mechanisms
 
   
 ##Usage##
-Add 'LCS.lua' file inside your project.
-Call it using require command.
+Add [LCS.lua](https://github.com/Yonaba/Lua-Class-System/blob/master/LCS.lua) file inside your project.<br/>
+Call it using __require__ function.</br>
 It will return a table containing a set of functions.
 	
 ##Full API Overview##
-		LCS.class(args)  : Creates a class
-		LCS.class.final(args)  : Creates a final class.
-		LCS.class.abstract(args)  : Creates a static class.
-		LCS.is_A(thing,kind)  : Checks the nature of the given argument 'thing'.
-		
-		[class](args) : Default class constructor used for instantiation.
-		[class]:new(args) : Same as [class](args)
-		[class]:extends(args) : Returns a new class derived from class [class].
-		[class]:getClass() : Returns a reference to the superclass of class [class] 
-		[class]:getSubClasses() : Returns a list of all classes deriving from class [class] 
-		[class]:super(method,...) : Calls a method defined in a parent of class [class]
-		
-		[instance]:getClass() : Returns a reference to the class from which 'instance' was created
-		[instance]:is_A(aClass) : 	Checks if instance [instance] was instantiated from a specific class.
-		[instance]:super(method,...) : 	Calls a methods defined in a parent of a class from which object 'instance' was created 
+* __LCS.class(args)__  : Creates a class
+* __LCS.class.final(args)__  : Creates a final class.
+* __LCS.class.abstract(args)__  : Creates a static class.
+* __LCS.is_A(thing,kind)__  : Checks the nature of the given argument 'thing'.
+* __class(args)__ : Default class constructor used for instantiation.
+* __class:new(args)__ : Same as class(args)__
+* __class:extends(args)__ : Returns a new class derived from class class.
+* __class:getClass()__ : Returns a reference to the superclass of class class 
+* __class:getSubClasses()__ : Returns a list of all classes deriving from class class 
+* __class:super(method,...)__ : Calls a method defined in a parent of class class
+* __instance:getClass()__ : Returns a reference to the class from which 'instance' was created
+* __instance:is_A(aClass)__ : Checks if instance instance was instantiated from a specific class.
+* __instance:super(method,...)__ : Calls a methods defined in a parent of a class from which object 'instance' was created 
 		
 ##Documentation##
 * Full Documentation is available, with example snippets: [Documentation][].
@@ -55,7 +53,7 @@ Copyright (c) 2012 Roland Yonaba
     3. This notice may not be removed or altered from any source
     distribution.
 
-[Documentation]: https://github.com/Yonaba/Lua-Class-System/downloads
+[Documentation]: https://github.com/Yonaba/Lua-Class-System/tree/master/docs
 [Tests.lua]: https://github.com/Yonaba/Lua-Class-System/blob/master/tests.lua
 [quickTour.lua]: https://github.com/Yonaba/Lua-Class-System/blob/master/quickTour.lua
 [LuaDoc]: http://keplerproject.github.com/luadoc/
