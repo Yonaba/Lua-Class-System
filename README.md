@@ -26,14 +26,14 @@ It will return a table containing a set of functions.
 		[instance]:super(method,...) : 	Calls a methods defined in a parent of a class from which object 'instance' was created 
 		
 ##Documentation##
-* Full Documentation is available, with example code: [Documentation][].
-* Tests have also been included : See [Tests.lua][]
-* A quickTour have been included : See [quickTour.lua][]
-* Documentation was generated thanks to [LuaDoc][].
+* Full Documentation is available, with example snippets: [Documentation][].
+* Find some tests here: [Tests.lua][]
+* Find a quicktour here: [quickTour.lua][]
+* Documentation generated with [LuaDoc][].
 
 		
 ##License##
-This work is under [zLIB License][]
+This work is under [zLIB License][]<br/>
 Copyright (c) 2012 Roland Yonaba
 
     This software is provided 'as-is', without any express or implied
