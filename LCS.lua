@@ -115,7 +115,7 @@ end
 
 -- Class creation
 Class = function(members)
-  checkForMethod(members)
+  if members then checkForMethod(members) end
   local newClass = members and deep_copy(members) or {}                              -- includes class variables
   newClass.__index = newClass                                                        -- prepares class for inheritance
   _register.class[newClass] = {__system = {                                          -- builds information for internal handling
