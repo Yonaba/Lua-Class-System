@@ -138,8 +138,10 @@ Class = function(members)
     assert(isA(self,'object'),'is_A() must be called from an object')
     if aClass then
       assert(isA(aClass,'class'),'When given, Argument must be a class')
+      return self:getClass() == aClass
+    else
+      return self:getClass()
     end
-    return (aClass and self:getClass() == aClass or self:getClass())
   end
 
   return setmetatable(newClass,baseClassMt)
