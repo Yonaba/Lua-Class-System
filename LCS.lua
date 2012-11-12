@@ -167,15 +167,13 @@ Class = function(members)
     assert(isA(self,'object'),'is_A() must be called from an object')
     if aClass then
       assert(isA(aClass,'class'),'When given, Argument must be a class')
-	  local target = self
-	  repeat
-	    local superclass = target:getClass()
-		if superclass == aClass then
-			return true
-		end
-		target = superclass
+	    local target = self
+      repeat
+        local superclass = target:getClass()
+        if superclass == aClass then return true end
+        target = superclass
       until (not superclass or shallow)
-	  return false
+      return false
     else
       return self:getClass()
     end
