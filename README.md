@@ -21,8 +21,56 @@ It will return a table containing a set of functions.
 * __class:super(method,...)__ : Calls a method defined in a parent of class class
 * __instance:getClass()__ : Returns a reference to the class from which 'instance' was created
 * __instance:is_A(aClass)__ : Checks if instance instance was instantiated from a specific class.
-* __instance:super(method,...)__ : Calls a methods defined in a parent of a class from which object 'instance' was created 
-		
+* __instance:super(method,...)__ : Calls a methods defined in a parent of a class from which object 'instance' was created
+
+##Printing classes and objects
+As of [v1.2](https://github.com/Yonaba/Lua-Class-System/blob/master/version_history.md), a light feature have been added.<br/>
+Any attempt to [print](http://pgl.yoyo.org/luai/i/print) or [tostring](http://pgl.yoyo.org/luai/i/tostring) a class/instance will return a custom string, 
+as shown in the following:
+
+```lua
+local LCS = require 'LCS'
+-- A Cat Class
+local Cat = LCS.class({name = 'Animal'})
+-- Init
+function Cat:init(name)
+  self.name = name
+end
+
+print(Cat) --> "class: <table: 0058C4C0>"
+
+local kitten = Cat('kitty')
+print(kitten) --> "object: <table: 0058C628>"
+````
+
+Yet, this behaviour can still be easily overriden if you want to provide your own output.
+Just attach a method named <tt>describe</tt> to the class.
+
+```lua
+local LCS = require 'LCS'
+-- A Cat Class
+local Cat = LCS.class({name = 'Animal'})
+-- Init
+function Cat:init(name)
+  self.name = name
+end
+
+print(Cat) --> "class: <table: 0058C4C0>"
+
+local kitten = Cat('kitty')
+print(kitten) --> "object: <table: 0058C628>"
+
+-- Now providing a describe method to have our own output
+function Cat:describe()
+  return self.name
+end
+
+print(Cat) --> "Animal"
+print(kitten) --> "kitty""
+````
+
+__Note__: <tt>describe</tt> method can be passed a variable number of arguments.
+
 ##Documentation##
 * Full Documentation is available, with example snippets: [Documentation][].
 * Find some tests here: [Tests.lua][]

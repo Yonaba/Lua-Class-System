@@ -27,8 +27,43 @@ local setmetatable, getmetatable = setmetatable, getmetatable
 local type = type
 local insert = table.insert
 
-local baseClassMt = {__call = function (self,...) return self:new(...) end}
-local _register = { class = {}, object = {}}
+-- Internal register
+local _register = setmetatable({ class = {}, object = {}},{__mode='k'})
+
+-- Checks if thing is a kind or whether an 'object' or 'class'
+local function isA(thing,kind)
+  if kind then
+    assert(kind == 'object' or kind == 'class',
+      'When given, string \'kind\' must be a \'class\' or an \'object\'')
+  end
+  if thing then
+    if _register.class[thing] then
+      return kind and _register.class[thing].__system.__type == kind
+                   or _register.class[thing].__system.__type
+    elseif _register.object[thing] then
+      return kind and _register.object[thing].__system.__type == type
+                   or _register.object[thing].__system.__type
+    end
+  end
+  return false
+end
+
+-- tostring
+local function __tostring(self,...)
+  if self.describe then return self:describe(...) end
+  local is = isA(self)
+  if is then
+    return ('%s: <%s>'):format(is,_register[is][self].__system.__addr)
+  end
+  return tostring(self)
+end
+
+-- Base metatable
+local baseClassMt = {
+  __call = function (self,...) return self:new(...) end,
+  __tostring = __tostring
+  }
+
 local Class
 
 -- Simple helper for building a raw copy of a table
@@ -53,27 +88,18 @@ local function checkForMethod(list)
   end
 end
 
--- Checks if thing is a kind or whether an 'object' or 'class'
-local function isA(thing,kind)
-  if kind then
-    assert(kind == 'object' or kind == 'class','When given, string \'kind\' must be a \'class\' or an \'object\'')
-  end
-  if thing then
-    if _register.class[thing] then
-      return kind and _register.class[thing].__system.__type == kind or _register.class[thing].__system.__type
-    elseif _register.object[thing] then
-      return kind and _register.object[thing].__system.__type == type or _register.object[thing].__system.__type
-    end
-  end
-  return false
-end
-
 -- Instantiation
 local function instantiateFromClass(self,...)
   assert(isA(self,'class'),'Class constructor must be called from a class')
   assert(not _register.class[self].__system.__abstract, 'Cannot instantiate from abstract class')
   local instance = {}
-  _register.object[instance] = {__system = {__type = 'object',__superClass = self}}
+  _register.object[instance] = {
+	__system = {
+		__type = 'object',
+		__superClass = self,
+		__addr = tostring(instance),
+		}
+	}
   local instance = setmetatable(instance,self)
     if self.init then
       self.init(instance, ...)
@@ -87,6 +113,7 @@ local function extendsFromClass(self,extra_params)
   assert(not _register.class[self].__system.__final, 'Cannot derive from a final class')
   local class = Class(extra_params)
   class.__index = class
+  class.__tostring = __tostring
   _register.class[class].__system.__superClass = self
   _register.class[self].__system.__subClass[class] = true
   return setmetatable(class,self)
@@ -124,6 +151,7 @@ Class = function(members)
     __final = final or false,
     __superClass = false,
     __subClass = {},
+	__addr = tostring(newClass)
     }
   }
 
@@ -133,7 +161,7 @@ Class = function(members)
   newClass.super = callFromSuperClass                                                -- super method calls handling
   newClass.getClass = getSuperClass                                                  -- gets the superclass
   newClass.getSubClasses = getSubClasses                                             -- gets the subclasses
-
+  newClass.__tostring = __tostring                                                   -- tostring
   newClass.is_A = function(self,aClass)                                              -- Object's class checking
     assert(isA(self,'object'),'is_A() must be called from an object')
     if aClass then
@@ -163,7 +191,10 @@ end
 
 -- Returns utilities packed in a table (in order to avoid polluting the global environment)
 return {
-      _VERSION = "1.1",
+      _VERSION = "1.2",
       is_A = isA,
-      class = setmetatable({ abstract = abstractClass, final = finalClass},{__call = function(self,...) return Class(...) end}),
+      class = setmetatable({
+        abstract = abstractClass,
+        final = finalClass},
+      {__call = function(self,...) return Class(...) end}),
     }

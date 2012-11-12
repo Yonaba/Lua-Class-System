@@ -1,5 +1,9 @@
 #Version history#
 
+##1.2 (11/12/12)
+* __tostring for classes/instances
+* Various slight enhancements
+
 ##1.1 (05/28/12)
 * Added : Error checking on attributing function as members using class constructor
 * Fixed : Handling of instance of any class as another class attributes
