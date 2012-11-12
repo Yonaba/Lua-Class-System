@@ -3,6 +3,7 @@
 ##1.2 (11/12/12)
 * __tostring for classes/instances
 * Various slight enhancements
+* Bugfix with <tt>is_A</tt>
 
 ##1.1 (05/28/12)
 * Added : Error checking on attributing function as members using class constructor

@@ -41,7 +41,7 @@ local function isA(thing,kind)
       return kind and _register.class[thing].__system.__type == kind
                    or _register.class[thing].__system.__type
     elseif _register.object[thing] then
-      return kind and _register.object[thing].__system.__type == type
+      return kind and _register.object[thing].__system.__type == kind
                    or _register.object[thing].__system.__type
     end
   end
