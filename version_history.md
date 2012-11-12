@@ -1,5 +1,8 @@
 #Version history#
 
+##1.2.1 (11/12/12)
+* <tt>is_A</tt> method now follows inheritance scheme (Thanks to Nicolas Carreras)
+
 ##1.2 (11/12/12)
 * __tostring for classes/instances
 * Various slight enhancements

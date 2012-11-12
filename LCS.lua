@@ -44,6 +44,7 @@ local function isA(thing,kind)
       return kind and _register.object[thing].__system.__type == kind
                    or _register.object[thing].__system.__type
     end
+
   end
   return false
 end
@@ -162,11 +163,19 @@ Class = function(members)
   newClass.getClass = getSuperClass                                                  -- gets the superclass
   newClass.getSubClasses = getSubClasses                                             -- gets the subclasses
   newClass.__tostring = __tostring                                                   -- tostring
-  newClass.is_A = function(self,aClass)                                              -- Object's class checking
+  newClass.is_A = function(self,aClass,shallow)                                              -- Object's class checking
     assert(isA(self,'object'),'is_A() must be called from an object')
     if aClass then
       assert(isA(aClass,'class'),'When given, Argument must be a class')
-      return self:getClass() == aClass
+	  local target = self
+	  repeat
+	    local superclass = target:getClass()
+		if superclass == aClass then
+			return true
+		end
+		target = superclass
+      until (not superclass or shallow)
+	  return false
     else
       return self:getClass()
     end
@@ -191,7 +200,7 @@ end
 
 -- Returns utilities packed in a table (in order to avoid polluting the global environment)
 return {
-      _VERSION = "1.2",
+      _VERSION = "1.2.1",
       is_A = isA,
       class = setmetatable({
         abstract = abstractClass,

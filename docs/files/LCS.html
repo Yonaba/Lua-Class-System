@@ -118,8 +118,8 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#[instance]:is_A">[instance]:is_A</a>&nbsp;(aClass)</td>
-	<td class="summary">Checks if instance [instance] was created from a specific class.</td>
+	<td class="name" nowrap><a href="#[instance]:is_A">[instance]:is_A</a>&nbsp;(aClass, shallow)</td>
+	<td class="summary">Checks if [instance] was created from a specific class.</td>
 	</tr>
 
 	<tr>
@@ -548,7 +548,7 @@ Returns a reference to the class from which 'instance' was created
 
 
 
-<dt><a name="[instance]:is_A"></a><strong>[instance]:is_A</strong>&nbsp;(aClass)</dt>
+<dt><a name="[instance]:is_A"></a><strong>[instance]:is_A</strong>&nbsp;(aClass, shallow)</dt>
 <dd>
 Checks if instance [instance] was created from a specific class. This method should not be called from a class.
 
@@ -559,6 +559,9 @@ Checks if instance [instance] was created from a specific class. This method sho
 	<li>
 	  aClass: [table] Optional. When given, tests if 'instance' was instantiated from aClass.
 	</li>
+	<li>
+	  shallow: [boolean] Optional. When given, will recurse on each parent class in the inheritance tree of the calling object 
+	</li>	
 	
 </ul>
 
@@ -567,7 +570,28 @@ Checks if instance [instance] was created from a specific class. This method sho
 
 <h3>Usage:</h3>
 <pre class='example'> <br> LCS = require('LCS') <br> Animal = LCS.class() <br> <br> thing = Animal()  <br> print(thing:is_A(Animal)) --> True <br> print(thing:is_A() == Animal)--> True <br> </pre>
+<pre class='example'> 
+local LCS = require 'LCS'
+local class  = LCS.class()
+local extClass = class:extends()
 
+local ext0 = extClass:extends()
+local ext1 = ext0 :extends()
+local ext2 = ext1:extends()
+local obj = ext2()
+    
+print(LCS.is_A(obj,'object')) --> true
+   
+print(obj:is_A(ext2)) --> true
+print(obj:is_A(ext1)) --> true
+print(obj:is_A(ext0)) --> true
+print(obj:is_A(class)) --> true
+    
+print(obj:is_A(ext2,true)) --> true
+print(obj:is_A(ext1,true)) --> false
+print(obj:is_A(extO,true)) --> false
+print(obj:is_A(class,true)) --> false
+</pre>
 
 
 <h3>Return value:</h3>
