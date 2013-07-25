@@ -93,7 +93,7 @@ end
 local function instantiateFromClass(self,...)
   assert(isA(self,'class'),'Class constructor must be called from a class')
   assert(not _register.class[self].__system.__abstract, 'Cannot instantiate from abstract class')
-  local instance = {}
+  local instance = deep_copy(self)
   _register.object[instance] = {
 	__system = {
 		__type = 'object',
