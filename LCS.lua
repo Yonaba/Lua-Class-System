@@ -95,12 +95,12 @@ local function instantiateFromClass(self,...)
   assert(not _register.class[self].__system.__abstract, 'Cannot instantiate from abstract class')
   local instance = deep_copy(self)
   _register.object[instance] = {
-	__system = {
-		__type = 'object',
-		__superClass = self,
-		__addr = tostring(instance),
-		}
-	}
+    __system = {
+      __type = 'object',
+      __superClass = self,
+      __addr = tostring(instance),
+    }
+  }
   local instance = setmetatable(instance,self)
     if self.init then
       self.init(instance, ...)
@@ -120,13 +120,45 @@ local function extendsFromClass(self,extra_params)
   return setmetatable(class,self)
 end
 
+-- Abstract class deriviation
+local function abstractExtendsFromClass(self, extra_params)
+  local c = self:extends(extra_params)
+  _register.class[c].__system.__abstract = true
+  return c
+end
+
+-- Final class deriviation
+local function finalExtendsFromClass(self, extra_params)
+  local c = self:extends(extra_params)
+  _register.class[c].__system.__final = true
+  return c
+end
+
 -- Super methods call
 local function callFromSuperClass(self,f,...)
   local superClass = getmetatable(self)
   if not superClass then return nil end
   local super = _register.class[superClass].__system.__superClass
+  local s = self
+  while s[f] == super[f] do
+    s = super
+    super = _register.class[super].__system.__superClass
+  end
+
+  -- If the superclass also has a superclass, temporarily set :super to call THAT superclass' methods
+  local supersSuper = _register.class[super].__system.__superClass
+  if supersSuper then
+    _register.class[superClass].__system.__superClass = supersSuper
+  end
+
   local method = super[f]
-  return method(self,...)
+  local result = method(self,...)
+
+  -- And set the superclass back, if necessary
+  if supersSuper then
+    _register.class[superClass].__system.__superClass = super
+  end
+  return result
 end
 
 -- Gets the superclass
@@ -147,17 +179,19 @@ Class = function(members)
   local newClass = members and deep_copy(members) or {}                              -- includes class variables
   newClass.__index = newClass                                                        -- prepares class for inheritance
   _register.class[newClass] = {__system = {                                          -- builds information for internal handling
-    __type = "class",
-    __abstract = abstract or false,
-    __final = final or false,
-    __superClass = false,
-    __subClass = {},
-	__addr = tostring(newClass)
+      __type = "class",
+      __abstract = abstract or false,
+      __final = final or false,
+      __superClass = false,
+      __subClass = {},
+      __addr = tostring(newClass)
     }
   }
 
   newClass.new = instantiateFromClass                                                -- class instanciation
   newClass.extends = extendsFromClass                                                -- class derivation
+  newClass.abstractExtends = abstractExtendsFromClass                                -- abstract class deriviation
+  newClass.finalExtends = finalExtendsFromClass                                      -- final class deriviation
   newClass.__call = baseClassMt.__call                                               -- shortcut for instantiation with class() call
   newClass.super = callFromSuperClass                                                -- super method calls handling
   newClass.getClass = getSuperClass                                                  -- gets the superclass
@@ -167,7 +201,7 @@ Class = function(members)
     assert(isA(self,'object'),'is_A() must be called from an object')
     if aClass then
       assert(isA(aClass,'class'),'When given, Argument must be a class')
-	    local target = self
+      local target = self
       repeat
         local superclass = target:getClass()
         if superclass == aClass then return true end
