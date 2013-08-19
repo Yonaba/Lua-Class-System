@@ -120,13 +120,40 @@ local function extendsFromClass(self,extra_params)
   return setmetatable(class,self)
 end
 
+-- Abstract class deriviation
+local function abstractExtendsFromClass(self, extra_params)
+  local c = self:extends(extra_params)
+  _register.class[c].__system.__abstract = true
+  return c
+end
+
+-- Final class deriviation
+local function finalExtendsFromClass(self, extra_params)
+  local c = self:extends(extra_params)
+  _register.class[c].__system.__final = true
+  return c
+end
+
 -- Super methods call
 local function callFromSuperClass(self,f,...)
   local superClass = getmetatable(self)
   if not superClass then return nil end
   local super = _register.class[superClass].__system.__superClass
+
+  -- If the superclass also has a superclass, temporarily set :super to call THAT superclass' methods
+  local supersSuper = _register.class[super].__system.__superClass
+  if supersSuper then
+    _register.class[superClass].__system.__superClass = supersSuper
+  end
+
   local method = super[f]
-  return method(self,...)
+  local result = method(self,...)
+
+  -- And set the superclass back, if necessary
+  if supersSuper then
+    _register.class[superClass].__system.__superClass = super
+  end
+  return result
 end
 
 -- Gets the superclass
@@ -158,6 +185,8 @@ Class = function(members)
 
   newClass.new = instantiateFromClass                                                -- class instanciation
   newClass.extends = extendsFromClass                                                -- class derivation
+  newClass.abstractExtends = abstractExtendsFromClass                                -- abstract class deriviation
+  newClass.finalExtends = finalExtendsFromClass                                      -- final class deriviation
   newClass.__call = baseClassMt.__call                                               -- shortcut for instantiation with class() call
   newClass.super = callFromSuperClass                                                -- super method calls handling
   newClass.getClass = getSuperClass                                                  -- gets the superclass
