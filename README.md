@@ -106,3 +106,6 @@ Copyright (c) 2012 Roland Yonaba
 [quickTour.lua]: https://github.com/Yonaba/Lua-Class-System/blob/master/quickTour.lua
 [LuaDoc]: http://keplerproject.github.com/luadoc/
 [zLIB License]: http://www.opensource.org/licenses/zlib-license.php
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Yonaba/lua-class-system/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
