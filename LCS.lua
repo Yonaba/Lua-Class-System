@@ -38,13 +38,14 @@ local function isA(thing,kind)
   end
   if thing then
     if _register.class[thing] then
-      return kind and _register.class[thing].__system.__type == kind
-                   or _register.class[thing].__system.__type
-    elseif _register.object[thing] then
-      return kind and _register.object[thing].__system.__type == kind
-                   or _register.object[thing].__system.__type
+    if kind then return _register.class[thing].__system.__type == kind
+    else return _register.class[thing].__system.__type
     end
-
+    elseif _register.object[thing] then
+    if kind then return _register.object[thing].__system.__type == kind
+    else return _register.object[thing].__system.__type
+    end
+    end
   end
   return false
 end
@@ -120,14 +121,14 @@ local function extendsFromClass(self,extra_params)
   return setmetatable(class,self)
 end
 
--- Abstract class deriviation
+-- Abstract class derivation
 local function abstractExtendsFromClass(self, extra_params)
   local c = self:extends(extra_params)
   _register.class[c].__system.__abstract = true
   return c
 end
 
--- Final class deriviation
+-- Final class derivation
 local function finalExtendsFromClass(self, extra_params)
   local c = self:extends(extra_params)
   _register.class[c].__system.__final = true
@@ -138,7 +139,8 @@ end
 local function callFromSuperClass(self,f,...)
   local superClass = getmetatable(self)
   if not superClass then return nil end
-  local super = _register.class[superClass].__system.__superClass
+  
+  local super = isA(self, 'class') and superClass or _register.class[superClass].__system.__superClass
   local s = self
   while s[f] == super[f] do
     s = super
@@ -232,7 +234,7 @@ end
 
 -- Returns utilities packed in a table (in order to avoid polluting the global environment)
 return {
-      _VERSION = "1.2.1",
+      _VERSION = "1.3.0",
       is_A = isA,
       class = setmetatable({
         abstract = abstractClass,
