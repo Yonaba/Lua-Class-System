@@ -1,4 +1,4 @@
--- Copyright (c) 2012 Roland Yonaba
+-- Copyright (c) 2012-2014 Roland Yonaba
 --[[
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -28,7 +28,10 @@ local type = type
 local insert = table.insert
 
 -- Internal register
-local _register = setmetatable({ class = {}, object = {}},{__mode='k'})
+local _register = {
+  class  = setmetatable({}, {__mode = 'v'}),
+  object = setmetatable({}, {__mode = 'v'})
+}
 
 -- Checks if thing is a kind or whether an 'object' or 'class'
 local function isA(thing,kind)
@@ -38,13 +41,17 @@ local function isA(thing,kind)
   end
   if thing then
     if _register.class[thing] then
-    if kind then return _register.class[thing].__system.__type == kind
-    else return _register.class[thing].__system.__type
-    end
+      if kind then 
+        return _register.class[thing].__system.__type == kind
+      else
+        return _register.class[thing].__system.__type
+      end
     elseif _register.object[thing] then
-    if kind then return _register.object[thing].__system.__type == kind
-    else return _register.object[thing].__system.__type
-    end
+      if kind then
+        return _register.object[thing].__system.__type == kind
+      else
+        return _register.object[thing].__system.__type
+      end
     end
   end
   return false
@@ -52,10 +59,13 @@ end
 
 -- tostring
 local function __tostring(self,...)
-  if self.describe then return self:describe(...) end
+  if self.describe then 
+    return self:describe(...)
+  end
   local is = isA(self)
   if is then
-    return ('%s: <%s>'):format(is,_register[is][self].__system.__addr)
+    return ('%s: <%s>')
+      :format(is,_register[is][self].__system.__addr)
   end
   return tostring(self)
 end
@@ -74,10 +84,13 @@ local function deep_copy(t)
   local r = {}
   for k,v in pairs(t) do
     if type(v) == 'table' then
-      if (_register.class[v] or _register.object[v]) then r[k] = v
-      else r[k] = deep_copy(v)
+      if (_register.class[v] or _register.object[v]) then 
+        r[k] = v
+      else 
+        r[k] = deep_copy(v)
       end
-    else r[k] = v
+    else
+      r[k] = v
     end
   end
   return r
@@ -234,10 +247,10 @@ end
 
 -- Returns utilities packed in a table (in order to avoid polluting the global environment)
 return {
-      _VERSION = "1.3.0",
-      is_A = isA,
-      class = setmetatable({
-        abstract = abstractClass,
-        final = finalClass},
-      {__call = function(self,...) return Class(...) end}),
-    }
+  _VERSION = "",
+  is_A = isA,
+  class = setmetatable({
+    abstract = abstractClass,
+    final = finalClass},
+  {__call = function(self,...) return Class(...) end}),
+}
